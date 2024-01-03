@@ -1,19 +1,33 @@
-import express from "express"
-import cors from "cors"
+import express from "express";
+import cors from "cors";
+import hotelRouter from './routers/hotel.router';
+import userRouter from './routers/user.router';
+import rezervationRouter from './routers/rezervation.router';
 
+import dotenv from 'dotenv';
+dotenv.config();
 
-const app = express()
+import { dbConnect } from "./configs/database.config";
+dbConnect();
 
-app.use(cors({
-    credentials:true,
-    origin:["http://localhost:4200"]
-}))
+const app = express();
+app.use(express.json());
+
+app.use(
+  cors({
+    credentials: true,
+    origin: ["http://localhost:4200"],
+  })
+);
 
 app.get("/", (req, res) => {
-    res.send("Hoş Geldiniz Tatil Heyecanı!")
-})
+  res.send("Hoş Geldiniz Tatil Heyecanı!");
+});
 
-const port = 5000;
-app.listen(port,() => {
-    console.log("Backend çalışıyor port:"+ port);
-})
+app.use("/api/hotels/", hotelRouter);
+app.use("/api/users/", userRouter);
+app.use("/api/rezervations/", rezervationRouter);
+
+app.listen(process.env.PORT, () => {
+  console.log("Backend çalışıyor http://localhost:" + process.env.PORT);
+});
